@@ -42,4 +42,8 @@ class Data extends Model
     {
         return $this->belongsTo(Desa::class, 'desa_tujuan_id', 'id');
     }
+    public function desa()
+    {
+        return $this->belongsTo(Desa::class);
+    }
 }

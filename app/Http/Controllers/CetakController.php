@@ -3,28 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Data;
-use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\PDF;
+use Illuminate\Support\Facades\Auth;
 
 class CetakController extends Controller
 {
     public function generateReport(Request $request)
     {
-        $month = $request->input('month');
-        $year = $request->input('year');
+        $user = Auth::user();
 
-        $query = Data::whereYear('created_at', $year);
+        $dataQuery = Data::query();
 
-        if ($month) {
-            $query->whereMonth('created_at', $month);
+        if (!$user->hasRole('super_admin')) {
+            $dataQuery->where('desa_tujuan_id', $user->desa_id);
         }
 
-        $data = $query->get();
+        $data = $dataQuery->when($request->year, function ($query, $year) {
+            $query->whereYear('created_at', $year);
+        })
+            ->when($request->month, function ($query, $month) {
+                $query->whereMonth('created_at', $month);
+            })
+            ->get();
 
         $pdf = PDF::loadView('pdf.cetak', [
             'data' => $data,
-            'month' => $month,
-            'year' => $year,
+            'month' => $request->month,
+            'year' => $request->year,
         ]);
 
         return $pdf->stream('Rekad Data Pindah Desa.pdf');

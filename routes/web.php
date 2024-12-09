@@ -8,4 +8,6 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/cetak', [CetakController::class, 'generateReport'])->name('cetak');
+Route::middleware('auth')->group(function () {
+    Route::get('/cetak', [CetakController::class, 'generateReport'])->name('cetak');
+});
