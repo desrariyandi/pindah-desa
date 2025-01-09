@@ -5,6 +5,8 @@
             5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
         ];
+
+        // $filter = request()->input('filter'); // Default 'tiba'
     @endphp
     <div class="container mx-auto p-4 bg-white shadow-sm rounded-md mt-8 h-full overflow-y-auto">
         <form id="filter-form" action="{{ route('cetak') }}" method="GET" target="pdf-frame" class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
@@ -26,6 +28,16 @@
                     @endfor
                 </select>
             </div>
+
+            @if(auth()->user()->hasRole('Desa'))
+            <label for="filter" class="block text-sm font-medium text-gray-700">Kepindahan:</label>
+                <div class="sm:col-span-2">
+                    <select name="filter" id="filter" class="mt-1 block w-full py-2 px-10 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="tiba" {{ request('filter') === 'tiba' ? 'selected' : '' }}>Tiba</option>
+                        <option value="pergi" {{ request('filter') === 'pergi' ? 'selected' : '' }}>Pergi</option>
+                    </select>
+                </div>
+            @endif
 
             <div class="sm:col-span-2">
                 <button type="submit" class="mt-1 block w-full py-2 px-3 bg-white hover:bg-gray-100 text-gray-800 py-2 px-4 border border-gray-400 rounded shadow">
